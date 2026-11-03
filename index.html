@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ETERNAL FIRE - Klan Yönetim Paneli</title>
+    <style>
+        body { background-color: #121212; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #1e1e1e; padding: 30px; border-radius: 10px; border: 1px solid #FFD700; box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
+        h1, h2 { color: #FFD700; text-align: center; }
+        .welcome-msg { background: rgba(255, 215, 0, 0.1); padding: 20px; border-left: 4px solid #FFD700; border-radius: 4px; line-height: 1.6; margin-bottom: 25px; font-style: italic; font-size: 15px;}
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #ddd; font-weight: bold;}
+        input { width: 100%; padding: 12px; border: 1px solid #444; border-radius: 5px; background: #2a2a2a; color: #fff; box-sizing: border-box; font-size: 14px;}
+        input:focus { outline: none; border-color: #FFD700; }
+        button { width: 100%; padding: 15px; background: #FFD700; color: #000; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; transition: 0.3s; }
+        button:hover { background: #e6c200; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+        th, td { padding: 12px; text-align: center; border-bottom: 1px solid #333; }
+        th { color: #FFD700; border-bottom: 2px solid #FFD700; }
+        tr:hover { background: #2a2a2a; }
+        #login-section, #dashboard-section { display: none; }
+        #login-section.active, #dashboard-section.active { display: block; }
+        .total-row { font-weight: bold; color: #FFD700; background: rgba(255, 215, 0, 0.1); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- GİRİŞ EKRANI -->
+        <div id="login-section" class="active">
+            <h1>ETERNAL FIRE</h1>
+            <div class="form-group">
+                <label>Güvenlik Şifresi:</label>
+                <input type="password" id="passwordInput" placeholder="Siteye giriş şifresini giriniz...">
+            </div>
+            <button onclick="checkPassword()">Giriş Yap</button>
+        </div>
+
+        <!-- YÖNETİM PANELİ -->
+        <div id="dashboard-section">
+            <h1>ETERNAL FIRE YÖNETİM PANELİ</h1>
+            <div class="welcome-msg">
+                Arkadaşlar, <strong>ETERNAL FIRE</strong> klanının resmi internet sitesine hoş geldiniz.<br><br>
+                Bu sitenin kuruluş amacı, klan savaşlarına daha iyi odaklanabilmek ve galibiyet serimizi sürdürebilmek için hesabınızdaki stoklarınızın detaylarını girebileceğiniz ve yönetim olarak işimizi kolaylaştırmayı hedeflediğimiz bir sitedir. Lütfen gerçek ve doğru bilgileri girerek stok bilgilerinizi kayıt altına alın ve stok durumunuzu günlük olarak güncellemeyi unutmayın. Birlikte daha güçlüyüz!
+            </div>
+
+            <h2>Stok Girişi</h2>
+            <div class="form-group"><label>Oyun İçi Adınız:</label><input type="text" id="playerName" placeholder="Oyundaki tam adınızı yazın"></div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group"><label>Çekiç:</label><input type="number" id="hammerCount" value="0"></div>
+                <div class="form-group"><label>Beceriler:</label><input type="number" id="skillCount" value="0"></div>
+                
+                <div class="form-group"><label>Binek:</label><input type="number" id="mountCount" value="0"></div>
+                <div class="form-group"><label>Birleştirilebilir Binek:</label><input type="number" id="mergeMountCount" value="0"></div>
+                
+                <div class="form-group"><label>Yumurta Kabuğu:</label><input type="number" id="eggCount" value="0"></div>
+                <div class="form-group"><label>Birleştirilebilir Yumurta Kabuğu:</label><input type="number" id="mergeEggCount" value="0"></div>
+            </div>
+            <button onclick="saveData()">Stok Bilgilerimi Kaydet / Güncelle</button>
+
+            <h2 style="margin-top: 40px;">Klan Stok Durumu</h2>
+            <div style="overflow-x:auto;">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Oyuncu Adı</th>
+                            <th>Çekiç</th>
+                            <th>Binek</th>
+                            <th>Birl. Binek</th>
+                            <th>Yumurta Kabuğu</th>
+                            <th>Birl. Yumurta</th>
+                            <th>Beceriler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Kaydedilen bilgiler burada listelenecek -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td>GENEL TOPLAM</td>
+                            <td id="totalHammer">0</td>
+                            <td id="totalMount">0</td>
+                            <td id="totalMergeMount">0</td>
+                            <td id="totalEgg">0</td>
+                            <td id="totalMergeEgg">0</td>
+                            <td id="totalSkill">0</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function checkPassword() {
+            var pass = document.getElementById("passwordInput").value;
+            if (pass === "1881") {
+                document.getElementById("login-section").classList.remove("active");
+                document.getElementById("dashboard-section").classList.add("active");
+                loadData();
+            } else {
+                alert("Hatalı şifre! Lütfen 1881 olarak tekrar deneyin.");
+            }
+        }
+
+        // Enter tuşu ile giriş yapabilme
+        document.getElementById("passwordInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") { event.preventDefault(); checkPassword(); }
+        });
+
+        function saveData() {
+            var name = document.getElementById("playerName").value.trim();
+            if (!name) { alert("Lütfen kayıt için oyun içi adınızı girin!"); return; }
+
+            var data = {
+                hammer: parseInt(document.getElementById("hammerCount").value) || 0,
+                mount: parseInt(document.getElementById("mountCount").value) || 0,
+                mergeMount: parseInt(document.getElementById("mergeMountCount").value) || 0,
+                egg: parseInt(document.getElementById("eggCount").value) || 0,
+                mergeEgg: parseInt(document.getElementById("mergeEggCount").value) || 0,
+                skill: parseInt(document.getElementById("skillCount").value) || 0
+            };
+
+            // Cloud/Veritabanı bağlantısı kurulana kadar verileri tarayıcı hafızasında tutar
+            var allData = JSON.parse(localStorage.getItem("eternalFireData")) || {};
+            allData[name] = data; 
+            localStorage.setItem("eternalFireData", JSON.stringify(allData));
+            
+            alert(name + " adlı oyuncunun stok bilgileri başarıyla güncellendi!");
+            loadData();
+        }
+
+        function loadData() {
+            var allData = JSON.parse(localStorage.getItem("eternalFireData")) || {};
+            var tbody = document.getElementById("tableBody");
+            tbody.innerHTML = "";
+
+            var totals = { hammer: 0, mount: 0, mergeMount: 0, egg: 0, mergeEgg: 0, skill: 0 };
+
+            for (var player in allData) {
+                var pd = allData[player];
+                totals.hammer += pd.hammer;
+                totals.mount += pd.mount;
+                totals.mergeMount += pd.mergeMount;
+                totals.egg += pd.egg;
+                totals.mergeEgg += pd.mergeEgg;
+                totals.skill += pd.skill;
+
+                var row = "<tr>" +
+                    "<td>" + player + "</td>" +
+                    "<td>" + pd.hammer + "</td>" +
+                    "<td>" + pd.mount + "</td>" +
+                    "<td>" + pd.mergeMount + "</td>" +
+                    "<td>" + pd.egg + "</td>" +
+                    "<td>" + pd.mergeEgg + "</td>" +
+                    "<td>" + pd.skill + "</td>" +
+                    "</tr>";
+                tbody.innerHTML += row;
+            }
+
+            document.getElementById("totalHammer").innerText = totals.hammer;
+            document.getElementById("totalMount").innerText = totals.mount;
+            document.getElementById("totalMergeMount").innerText = totals.mergeMount;
+            document.getElementById("totalEgg").innerText = totals.egg;
+            document.getElementById("totalMergeEgg").innerText = totals.mergeEgg;
+            document.getElementById("totalSkill").innerText = totals.skill;
+        }
+    </script>
+</body>
+</html>
